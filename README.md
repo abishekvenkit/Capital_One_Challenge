@@ -12,7 +12,7 @@ The web application was made using: <br>
   -Bootstrap
   
  Some other notes: The mpld3 library was used to create graphs for data visualization. The library exported interactive figures
- to html, which was then embedded into the web page. The styling of the web page used CSS styling and a basic bootstrap template
+ to html, which was then embedded into the web page. You can zoom into the graphs and scale them using the interactive buttons on the bottom left. The styling of the web page used CSS styling and a basic bootstrap template
  
  Important Files: <br>
  -graphs.py - holds the functions to create the plots <br>
