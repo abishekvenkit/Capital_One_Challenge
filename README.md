@@ -16,6 +16,7 @@ The web application was made using: <br>
  -graphs.py - holds the functions to create the plots <br>
  -app.py - runs the app <br>
  -templates files - html files for each page <br>
+ -html_plots folder - holds the raw html for the plots created using matplotlib and mpld3
  
  NOTE: Some data was pulled from the online website https://bikeshare.metro.net/about/data/?. This was because some of the data
  for the season plots in the orginal csv did not seem sufficient.
