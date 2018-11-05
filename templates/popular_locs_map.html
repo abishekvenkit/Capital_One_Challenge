@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <!-- Bootstrap core CSS -->
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../static/css/starter-template.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+
+    <title>Most Popular Locations</title>
+
+    <style>
+      body {font-family: Arial, Helvetica, sans-serif;}
+
+      body {
+          background-color: white;
+      }
+    </style>
+  </head>
+
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+  <body>
+
+    <!--Navigation bar-->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Capital One Challenge</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li><a href="/data_visuals">Data Visuals</a></li>
+            <li class="active"><a href="/location_analysis">Location Analysis</a></li>
+            <li><a href="/distance_riders">Distance and Riders</a></li>
+            <li><a href="/seasons">Seasonal Analysis</a></li>
+            <li><a href="/bike_logistics">Bike Logistics</a></li>
+            <li><a href="/category_passholder">Category-Passholder</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+    <!--end of Navigation bar-->
+
+    <!--Headers of google API graphs-->
+    <h2 style="position: absolute; top:85px; left:230px">Popular Start Locations</h2>
+    <h2 style="position: absolute; top:85px; right:230px">Popular End Locations</h2>
+    <!--Text explaining our data-->
+    <pre style= "position: absolute; top:1150px; left:20%; right:20%"><center>
+    Above we can see the most visited start and stop locations and their station
+     IDs. By examing the map as well as the bar graph, we can understand the most visited
+      stops in Los Angeles. Certain stops have over 5,000 visits from our data set, and 
+    the sheer volume of total trips is evident from our data. We can also see that most of
+     the stops are right in the heart of downtown. This makes sense considering the high 
+   populations around the station locations. </center></pre>
+
+    <!--Map objects positioned-->
+    <div id="map" style="top: 120px; left: 25px; width:710px; height:500px; float: left"></div>
+    <div id="map2" style="top: 120px; left: 75px; width:710px; height:500px"></div>
+
+   <script>
+        //var locations to represent the latitude and longitude points of our markers
+        var locations = [
+        {lat: 34.0451813, lng: -118.25024},
+        {lat: 34.0460701, lng: -118.23309},
+        {lat: 34.0465202, lng: -118.23741},
+        {lat: 34.0493011, lng: -118.23881},
+        {lat: 34.0566101, lng: -118.23721},
+        {lat: 34.0447006, lng: -118.25244},
+        {lat: 34.0468102, lng: -118.25698},
+        {lat: 34.0485497, lng: -118.25905},
+        {lat: 34.0519409, lng: -118.24353},
+        {lat: 34.0508804, lng: -118.24825}]
+        //for map 2
+        var locations2 =  [
+        {lat: 34.0491982, lng: -118.25283},
+        {lat: 34.0519409, lng: -118.24353},
+        {lat: 34.0460701, lng: -118.23309},
+        {lat: 34.0468102, lng: -118.25698},
+        {lat: 34.0465202, lng: -118.23741},
+        {lat: 34.0508804, lng: -118.24825},
+        {lat: 34.0493011, lng: -118.23881},
+        {lat: 34.0566101, lng: -118.23721},
+        {lat: 34.0447006, lng: -118.25244},
+        {lat: 34.0485497, lng: -118.25905}]
+      
+      //function to create maps
+      function initMap() {
+        //create first map using center point
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 3,
+          center: {lat: 34.0451813, lng: -118.25024}
+        });
+
+        // Create an array of stops to label the markers.
+        var labels = ['3067', '3022', '3082', '3042', '3014', '3031', '3064', '3005', '3030', '3069'];
+
+        // Add markers to the map.
+        // Note: The code uses the JavaScript Array.prototype.map() method to
+        // create an array of markers based on a given "locations" array.
+        // The map() method here has nothing to do with the Google Maps API.
+        var markers = locations.map(function(location, i) {
+          return new google.maps.Marker({
+            position: location,
+            label: labels[i]
+          });
+        });
+
+        // Add a marker clusterer to manage the markers.
+        var markerCluster = new MarkerClusterer(map, markers,
+            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+      
+        //create second map
+        var map2 = new google.maps.Map(document.getElementById('map2'), {
+          zoom: 3,
+          center: {lat: 34.0491982, lng: -118.25283}
+        });
+
+        // Create an array of stops to label the markers.
+        var labels2 = ['3063', '3030', '3022', '3064', '3082', '3069', '3042', '3014', '3031', '3005'];
+
+        // Add markers to the map.
+        // Note: The code uses the JavaScript Array.prototype.map() method to
+        // create an array of markers based on a given "locations" array.
+        // The map() method here has nothing to do with the Google Maps API.
+        var markers = locations2.map(function(location, i) {
+          return new google.maps.Marker({
+            position: location,
+            label: labels2[i]
+          });
+        });
+
+        // Add a marker clusterer to manage the markers.
+        var markerCluster = new MarkerClusterer(map2, markers,
+            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+      }
+
+    </script>
+
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBY9EEHAgR74nCSxqcptpFLTxDCO8LsDD0&callback=initMap">
+    </script>
+
+
+
+<!----------------------------------------------------------------------------------->
+<!--Below you find the embedded html code for our mpld3 graphs. This code was generated by the mpld3 library-->
+<!--poitioning-->
+<div id="fig_el3160823787713289762964183425" style="position: absolute; top:650px; left:25px"></div>
+<script>
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
+   // already loaded: just create the figure
+   !function(mpld3){
+       
+       mpld3.draw_figure("fig_el3160823787713289762964183425", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.8900000000000001, 9.89], "ylim": [0.0, 5394.9], "xdomain": [-0.8900000000000001, 9.89], "ydomain": [0.0, 5394.9], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 10, "tickvalues": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], "tickformat": ["3067", "3022", "3082", "3042", "3014", "3031", "3064", "3005", "3030", "3069"], "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": true, "color": "#FFFFFF", "dasharray": "none", "alpha": 1.0}, "visible": true}, {"position": "left", "nticks": 7, "tickvalues": null, "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": true, "color": "#FFFFFF", "dasharray": "none", "alpha": 1.0}, "visible": true}], "axesbg": "#EAEAF2", "axesbgalpha": null, "zoomable": true, "id": "el316082379148169000", "lines": [], "paths": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199503608", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199502936", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199587160", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data04", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199588000", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data05", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199588840", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data06", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199589736", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data07", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199643944", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data08", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199644840", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data09", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199645736", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data10", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199646632", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}], "markers": [], "texts": [{"text": "Stop ID", "position": [0.5, -0.0738035113035113], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 11.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el316082379148195992"}, {"text": "Number of Visits", "position": [-0.09330197132616488, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 11.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el316082379148196944"}, {"text": "Most Visited Stops", "position": [0.5, 1.0225468975468976], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -0.0, "fontsize": 12.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el316082379148374088"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[-0.4, 0.0], [0.4, 0.0], [0.4, 3797.0], [-0.4, 3797.0]], "data02": [[0.6, 0.0], [1.4, 0.0], [1.4, 3893.0], [0.6, 3893.0]], "data03": [[1.6, 0.0], [2.4000000000000004, 0.0], [2.4000000000000004, 3908.0], [1.6, 3908.0]], "data04": [[2.6, 0.0], [3.4000000000000004, 0.0], [3.4000000000000004, 4015.0], [2.6, 4015.0]], "data05": [[3.6, 0.0], [4.4, 0.0], [4.4, 4571.0], [3.6, 4571.0]], "data06": [[4.6, 0.0], [5.3999999999999995, 0.0], [5.3999999999999995, 4629.0], [4.6, 4629.0]], "data07": [[5.6, 0.0], [6.3999999999999995, 0.0], [6.3999999999999995, 4661.0], [5.6, 4661.0]], "data08": [[6.6, 0.0], [7.3999999999999995, 0.0], [7.3999999999999995, 4883.0], [6.6, 4883.0]], "data09": [[7.6, 0.0], [8.4, 0.0], [8.4, 5059.0], [7.6, 5059.0]], "data10": [[8.6, 0.0], [9.4, 0.0], [9.4, 5138.0], [8.6, 5138.0]]}, "id": "el316082378771328976", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+   }(mpld3);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "https://mpld3.github.io/js/d3.v3.min"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.3.js", function(){
+         
+         mpld3.draw_figure("fig_el3160823787713289762964183425", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.8900000000000001, 9.89], "ylim": [0.0, 5394.9], "xdomain": [-0.8900000000000001, 9.89], "ydomain": [0.0, 5394.9], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 10, "tickvalues": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], "tickformat": ["3067", "3022", "3082", "3042", "3014", "3031", "3064", "3005", "3030", "3069"], "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": true, "color": "#FFFFFF", "dasharray": "none", "alpha": 1.0}, "visible": true}, {"position": "left", "nticks": 7, "tickvalues": null, "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": true, "color": "#FFFFFF", "dasharray": "none", "alpha": 1.0}, "visible": true}], "axesbg": "#EAEAF2", "axesbgalpha": null, "zoomable": true, "id": "el316082379148169000", "lines": [], "paths": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199503608", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199502936", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199587160", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data04", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199588000", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data05", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199588840", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data06", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199589736", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data07", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199643944", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data08", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199644840", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data09", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199645736", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data10", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199646632", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}], "markers": [], "texts": [{"text": "Stop ID", "position": [0.5, -0.0738035113035113], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 11.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el316082379148195992"}, {"text": "Number of Visits", "position": [-0.09330197132616488, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 11.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el316082379148196944"}, {"text": "Most Visited Stops", "position": [0.5, 1.0225468975468976], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -0.0, "fontsize": 12.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el316082379148374088"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[-0.4, 0.0], [0.4, 0.0], [0.4, 3797.0], [-0.4, 3797.0]], "data02": [[0.6, 0.0], [1.4, 0.0], [1.4, 3893.0], [0.6, 3893.0]], "data03": [[1.6, 0.0], [2.4000000000000004, 0.0], [2.4000000000000004, 3908.0], [1.6, 3908.0]], "data04": [[2.6, 0.0], [3.4000000000000004, 0.0], [3.4000000000000004, 4015.0], [2.6, 4015.0]], "data05": [[3.6, 0.0], [4.4, 0.0], [4.4, 4571.0], [3.6, 4571.0]], "data06": [[4.6, 0.0], [5.3999999999999995, 0.0], [5.3999999999999995, 4629.0], [4.6, 4629.0]], "data07": [[5.6, 0.0], [6.3999999999999995, 0.0], [6.3999999999999995, 4661.0], [5.6, 4661.0]], "data08": [[6.6, 0.0], [7.3999999999999995, 0.0], [7.3999999999999995, 4883.0], [6.6, 4883.0]], "data09": [[7.6, 0.0], [8.4, 0.0], [8.4, 5059.0], [7.6, 5059.0]], "data10": [[8.6, 0.0], [9.4, 0.0], [9.4, 5138.0], [8.6, 5138.0]]}, "id": "el316082378771328976", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("https://mpld3.github.io/js/d3.v3.min.js", function(){
+         mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.3.js", function(){
+                 
+                 mpld3.draw_figure("fig_el3160823787713289762964183425", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.8900000000000001, 9.89], "ylim": [0.0, 5394.9], "xdomain": [-0.8900000000000001, 9.89], "ydomain": [0.0, 5394.9], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 10, "tickvalues": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], "tickformat": ["3067", "3022", "3082", "3042", "3014", "3031", "3064", "3005", "3030", "3069"], "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": true, "color": "#FFFFFF", "dasharray": "none", "alpha": 1.0}, "visible": true}, {"position": "left", "nticks": 7, "tickvalues": null, "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": true, "color": "#FFFFFF", "dasharray": "none", "alpha": 1.0}, "visible": true}], "axesbg": "#EAEAF2", "axesbgalpha": null, "zoomable": true, "id": "el316082379148169000", "lines": [], "paths": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199503608", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199502936", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199587160", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data04", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199588000", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data05", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199588840", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data06", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199589736", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data07", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199643944", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data08", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199644840", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data09", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199645736", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data10", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el316082379199646632", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}], "markers": [], "texts": [{"text": "Stop ID", "position": [0.5, -0.0738035113035113], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 11.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el316082379148195992"}, {"text": "Number of Visits", "position": [-0.09330197132616488, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 11.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el316082379148196944"}, {"text": "Most Visited Stops", "position": [0.5, 1.0225468975468976], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -0.0, "fontsize": 12.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el316082379148374088"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[-0.4, 0.0], [0.4, 0.0], [0.4, 3797.0], [-0.4, 3797.0]], "data02": [[0.6, 0.0], [1.4, 0.0], [1.4, 3893.0], [0.6, 3893.0]], "data03": [[1.6, 0.0], [2.4000000000000004, 0.0], [2.4000000000000004, 3908.0], [1.6, 3908.0]], "data04": [[2.6, 0.0], [3.4000000000000004, 0.0], [3.4000000000000004, 4015.0], [2.6, 4015.0]], "data05": [[3.6, 0.0], [4.4, 0.0], [4.4, 4571.0], [3.6, 4571.0]], "data06": [[4.6, 0.0], [5.3999999999999995, 0.0], [5.3999999999999995, 4629.0], [4.6, 4629.0]], "data07": [[5.6, 0.0], [6.3999999999999995, 0.0], [6.3999999999999995, 4661.0], [5.6, 4661.0]], "data08": [[6.6, 0.0], [7.3999999999999995, 0.0], [7.3999999999999995, 4883.0], [6.6, 4883.0]], "data09": [[7.6, 0.0], [8.4, 0.0], [8.4, 5059.0], [7.6, 5059.0]], "data10": [[8.6, 0.0], [9.4, 0.0], [9.4, 5138.0], [8.6, 5138.0]]}, "id": "el316082378771328976", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+            })
+         });
+}
+</script>
+
+
+<!----------------------------------------------------------------------------------->
+<!--Below you find the embedded html code for our mpld3 graphs. This code was generated by the mpld3 library-->
+<!--poitioning-->
+<div id="fig_el1831222376580341286305608429" style="position: absolute; top:650px; right:25px"></div>
+<script>
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
+   // already loaded: just create the figure
+   !function(mpld3){
+       
+       mpld3.draw_figure("fig_el1831222376580341286305608429", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.8900000000000001, 9.89], "ylim": [0.0, 6575.1], "xdomain": [-0.8900000000000001, 9.89], "ydomain": [0.0, 6575.1], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 10, "tickvalues": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], "tickformat": ["3063", "3030", "3022", "3064", "3082", "3069", "3042", "3014", "3031", "3005"], "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": true, "color": "#FFFFFF", "dasharray": "none", "alpha": 1.0}, "visible": true}, {"position": "left", "nticks": 8, "tickvalues": null, "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": true, "color": "#FFFFFF", "dasharray": "none", "alpha": 1.0}, "visible": true}], "axesbg": "#EAEAF2", "axesbgalpha": null, "zoomable": true, "id": "el183122235887394600", "lines": [], "paths": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235938921720", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235938921048", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939009368", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data04", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939010208", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data05", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939011048", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data06", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939011944", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data07", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939066152", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data08", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939067048", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data09", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939067944", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data10", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939068840", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}], "markers": [], "texts": [{"text": "Stop ID", "position": [0.5, -0.0738035113035113], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 11.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el183122235887421592"}, {"text": "Number of Visits", "position": [-0.09330197132616488, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 11.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el183122235887422544"}, {"text": "Most Visited Stops", "position": [0.5, 1.0225468975468976], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -0.0, "fontsize": 12.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el183122235887607880"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[-0.4, 0.0], [0.4, 0.0], [0.4, 3763.0], [-0.4, 3763.0]], "data02": [[0.6, 0.0], [1.4, 0.0], [1.4, 4224.0], [0.6, 4224.0]], "data03": [[1.6, 0.0], [2.4000000000000004, 0.0], [2.4000000000000004, 4337.0], [1.6, 4337.0]], "data04": [[2.6, 0.0], [3.4000000000000004, 0.0], [3.4000000000000004, 4605.0], [2.6, 4605.0]], "data05": [[3.6, 0.0], [4.4, 0.0], [4.4, 4703.0], [3.6, 4703.0]], "data06": [[4.6, 0.0], [5.3999999999999995, 0.0], [5.3999999999999995, 5072.0], [4.6, 5072.0]], "data07": [[5.6, 0.0], [6.3999999999999995, 0.0], [6.3999999999999995, 5293.0], [5.6, 5293.0]], "data08": [[6.6, 0.0], [7.3999999999999995, 0.0], [7.3999999999999995, 5385.0], [6.6, 5385.0]], "data09": [[7.6, 0.0], [8.4, 0.0], [8.4, 5517.0], [7.6, 5517.0]], "data10": [[8.6, 0.0], [9.4, 0.0], [9.4, 6262.0], [8.6, 6262.0]]}, "id": "el183122237658034128", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+   }(mpld3);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "https://mpld3.github.io/js/d3.v3.min"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.3.js", function(){
+         
+         mpld3.draw_figure("fig_el1831222376580341286305608429", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.8900000000000001, 9.89], "ylim": [0.0, 6575.1], "xdomain": [-0.8900000000000001, 9.89], "ydomain": [0.0, 6575.1], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 10, "tickvalues": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], "tickformat": ["3063", "3030", "3022", "3064", "3082", "3069", "3042", "3014", "3031", "3005"], "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": true, "color": "#FFFFFF", "dasharray": "none", "alpha": 1.0}, "visible": true}, {"position": "left", "nticks": 8, "tickvalues": null, "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": true, "color": "#FFFFFF", "dasharray": "none", "alpha": 1.0}, "visible": true}], "axesbg": "#EAEAF2", "axesbgalpha": null, "zoomable": true, "id": "el183122235887394600", "lines": [], "paths": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235938921720", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235938921048", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939009368", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data04", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939010208", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data05", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939011048", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data06", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939011944", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data07", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939066152", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data08", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939067048", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data09", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939067944", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data10", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939068840", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}], "markers": [], "texts": [{"text": "Stop ID", "position": [0.5, -0.0738035113035113], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 11.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el183122235887421592"}, {"text": "Number of Visits", "position": [-0.09330197132616488, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 11.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el183122235887422544"}, {"text": "Most Visited Stops", "position": [0.5, 1.0225468975468976], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -0.0, "fontsize": 12.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el183122235887607880"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[-0.4, 0.0], [0.4, 0.0], [0.4, 3763.0], [-0.4, 3763.0]], "data02": [[0.6, 0.0], [1.4, 0.0], [1.4, 4224.0], [0.6, 4224.0]], "data03": [[1.6, 0.0], [2.4000000000000004, 0.0], [2.4000000000000004, 4337.0], [1.6, 4337.0]], "data04": [[2.6, 0.0], [3.4000000000000004, 0.0], [3.4000000000000004, 4605.0], [2.6, 4605.0]], "data05": [[3.6, 0.0], [4.4, 0.0], [4.4, 4703.0], [3.6, 4703.0]], "data06": [[4.6, 0.0], [5.3999999999999995, 0.0], [5.3999999999999995, 5072.0], [4.6, 5072.0]], "data07": [[5.6, 0.0], [6.3999999999999995, 0.0], [6.3999999999999995, 5293.0], [5.6, 5293.0]], "data08": [[6.6, 0.0], [7.3999999999999995, 0.0], [7.3999999999999995, 5385.0], [6.6, 5385.0]], "data09": [[7.6, 0.0], [8.4, 0.0], [8.4, 5517.0], [7.6, 5517.0]], "data10": [[8.6, 0.0], [9.4, 0.0], [9.4, 6262.0], [8.6, 6262.0]]}, "id": "el183122237658034128", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("https://mpld3.github.io/js/d3.v3.min.js", function(){
+         mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.3.js", function(){
+                 
+                 mpld3.draw_figure("fig_el1831222376580341286305608429", {"width": 640.0, "height": 480.0, "axes": [{"bbox": [0.125, 0.10999999999999999, 0.775, 0.77], "xlim": [-0.8900000000000001, 9.89], "ylim": [0.0, 6575.1], "xdomain": [-0.8900000000000001, 9.89], "ydomain": [0.0, 6575.1], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 10, "tickvalues": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], "tickformat": ["3063", "3030", "3022", "3064", "3082", "3069", "3042", "3014", "3031", "3005"], "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": true, "color": "#FFFFFF", "dasharray": "none", "alpha": 1.0}, "visible": true}, {"position": "left", "nticks": 8, "tickvalues": null, "tickformat": null, "scale": "linear", "fontsize": 10.0, "grid": {"gridOn": true, "color": "#FFFFFF", "dasharray": "none", "alpha": 1.0}, "visible": true}], "axesbg": "#EAEAF2", "axesbgalpha": null, "zoomable": true, "id": "el183122235887394600", "lines": [], "paths": [{"data": "data01", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235938921720", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data02", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235938921048", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data03", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939009368", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data04", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939010208", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data05", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939011048", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data06", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939011944", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data07", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939066152", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data08", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939067048", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data09", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939067944", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}, {"data": "data10", "xindex": 0, "yindex": 1, "coordinates": "data", "pathcodes": ["M", "L", "L", "L", "Z"], "id": "el183122235939068840", "dasharray": "none", "alpha": 1, "facecolor": "#008080", "edgecolor": "none", "edgewidth": 0.3, "zorder": 1}], "markers": [], "texts": [{"text": "Stop ID", "position": [0.5, -0.0738035113035113], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 11.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el183122235887421592"}, {"text": "Number of Visits", "position": [-0.09330197132616488, 0.5], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -90.0, "fontsize": 11.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el183122235887422544"}, {"text": "Most Visited Stops", "position": [0.5, 1.0225468975468976], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "auto", "rotation": -0.0, "fontsize": 12.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el183122235887607880"}], "collections": [], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[-0.4, 0.0], [0.4, 0.0], [0.4, 3763.0], [-0.4, 3763.0]], "data02": [[0.6, 0.0], [1.4, 0.0], [1.4, 4224.0], [0.6, 4224.0]], "data03": [[1.6, 0.0], [2.4000000000000004, 0.0], [2.4000000000000004, 4337.0], [1.6, 4337.0]], "data04": [[2.6, 0.0], [3.4000000000000004, 0.0], [3.4000000000000004, 4605.0], [2.6, 4605.0]], "data05": [[3.6, 0.0], [4.4, 0.0], [4.4, 4703.0], [3.6, 4703.0]], "data06": [[4.6, 0.0], [5.3999999999999995, 0.0], [5.3999999999999995, 5072.0], [4.6, 5072.0]], "data07": [[5.6, 0.0], [6.3999999999999995, 0.0], [6.3999999999999995, 5293.0], [5.6, 5293.0]], "data08": [[6.6, 0.0], [7.3999999999999995, 0.0], [7.3999999999999995, 5385.0], [6.6, 5385.0]], "data09": [[7.6, 0.0], [8.4, 0.0], [8.4, 5517.0], [7.6, 5517.0]], "data10": [[8.6, 0.0], [9.4, 0.0], [9.4, 6262.0], [8.6, 6262.0]]}, "id": "el183122237658034128", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+            })
+         });
+}
+</script>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="../../dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+
+  </body>
+</html>
